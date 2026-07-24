@@ -32,7 +32,6 @@ function Mian() {
         element.scrollIntoView({ behavior: "smooth" });
       }
     } else {
-      // ពេលចូលមកដល់ដំបូងភ្លាម ឱ្យវាទម្លាក់ Scroll មកកាន់ id="home" ស្របគ្នា
       window.scrollTo(0, 0);
     }
   }, [location]);
@@ -58,7 +57,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Mian />} />          
-          <Route path="/home" element={<Mian />} /> {/* បន្ថែមដើម្បីការពារកុំឱ្យចេញអេក្រង់សពេលចូល /home */}
+          <Route path="/home" element={<Mian />} /> 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/qa" element={<QA />} />
