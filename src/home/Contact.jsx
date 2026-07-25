@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 function Contact() {
   const [user, setUser] = useState(null);
@@ -27,33 +28,39 @@ function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setStatus("Sending...");
 
     try {
-      const text = `New Contact Form Message:\nName: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`;
+      await addDoc(collection(db, "contacts"), {
+        userName: formData.name,
+        userEmail: formData.email,
+        subject: "General Message",
+        description: formData.message,
+        userId: user ? user.uid : "guest",
+        userRole: user ? "user" : "guest",
+        createdAt: serverTimestamp(),
+      });
 
-      const response = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: text,
-          }),
-        },
-      );
-
-      if (response.ok) {
-        setStatus("Message sent successfully!");
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        setStatus("Failed to send message. Please try again.");
+      if (TELEGRAM_BOT_TOKEN && CHAT_ID) {
+        const text = `New Contact Form Message:\nName: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`;
+        await fetch(
+          `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: CHAT_ID,
+              text: text,
+            }),
+          }
+        );
       }
+
+      setStatus("Message sent successfully!");
+      setFormData({ name: "", email: "", message: "" });
     } catch (error) {
       console.error("Error sending message:", error);
-      setStatus("An error occurred. Please try again.");
+      setStatus("Failed to send message. Please try again.");
     }
   };
 
