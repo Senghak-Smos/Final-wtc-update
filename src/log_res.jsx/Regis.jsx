@@ -4,7 +4,7 @@ import { auth, db } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
-const ADMIN_EMAILS = ["admin@center.com"];
+const ADMIN_EMAILS = ["admin@cer.com"];
 
 function Register() {
   const [name, setName] = useState("");

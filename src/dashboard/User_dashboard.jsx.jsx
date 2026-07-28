@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
-import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 function UserDashboard() {
@@ -8,47 +8,50 @@ function UserDashboard() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
-
-  const fetchCalculations = async (currentUser) => {
-    if (!currentUser) {
-      setHistory([]);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setErrorMsg("");
-
-      const q = query(
-        collection(db, "calculations"),
-        where("userId", "==", currentUser.uid)
-      );
-
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map((docSnap) => ({
-        id: docSnap.id,
-        ...docSnap.data(),
-      }));
-
-      console.log("Fetched User Data:", data);
-      setHistory(data);
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-      setErrorMsg(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    let unsubscribeSnapshot = null;
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      fetchCalculations(user);
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUserEmail(currentUser.email);
+        setLoading(true);
+        setErrorMsg("");
+
+        const q = query(
+          collection(db, "calculations"),
+          where("userId", "==", currentUser.uid)
+        );
+
+        unsubscribeSnapshot = onSnapshot(
+          q,
+          (querySnapshot) => {
+            const data = querySnapshot.docs.map((docSnap) => ({
+              id: docSnap.id,
+              ...docSnap.data(),
+            }));
+            setHistory(data);
+            setLoading(false);
+          },
+          (error) => {
+            console.error("Error fetching data: ", error);
+            setErrorMsg(error.message);
+            setLoading(false);
+          }
+        );
+      } else {
+        setUserEmail("");
+        setHistory([]);
+        setLoading(false);
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []);
 
   const handleDelete = async (id) => {
@@ -75,6 +78,12 @@ function UserDashboard() {
     return sum + val;
   }, 0);
 
+  const getAutoLogo = () => {
+    if (!userEmail) return "C-E-R";
+    const firstChar = userEmail.charAt(0).toUpperCase();
+    return firstChar;
+  };
+
   if (loading) {
     return (
       <div className="pt-36 text-center font-bold text-slate-600 min-h-screen bg-gray-100">
@@ -96,30 +105,23 @@ function UserDashboard() {
           </div>
         )}
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div className="flex flex-col border-2 border-black p-4 rounded-[10px] sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.1)]">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 font-adlam">
-              User Dashboard
+              Dashboard
             </h1>
             <p className="text-gray-600 mt-1">
-              View and manage your saved calculation history.
+              Welcome back, <span className="font-semibold text-blue-600">{userEmail || "Guest"}</span>
             </p>
           </div>
-          <button
-            onClick={() => fetchCalculations(auth.currentUser)}
-            className="px-4 py-2 text-sm font-bold 
-            bg-white border-2 border-white rounded-[8px] 
-            cursor-pointer 
-            shadow-lg
-            bg-blue-700 text-white 
-            hover:scale-110"
-          >
-            Refresh History
-          </button>
+
+          <div className="flex items-center gap-2 bg-blue-500 px-4 py-2 rounded-full w-30 shadow-md">
+            <span className="text-xl font-adlam text-white">
+              {getAutoLogo()}
+            </span>
+          </div>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
           <div className="bg-white border-2 border-black rounded-[10px] p-5 shadow-[0px_0px_10px_rgba(0,0,0,0.1)]">
             <h3 className="text-xs font-bold text-gray-500 uppercase">Total Saved</h3>
@@ -143,7 +145,6 @@ function UserDashboard() {
           </div>
         </div>
 
-        {/* History Table */}
         <div className="bg-white border-2 border-black rounded-[10px] shadow-[0px_0px_10px_rgba(0,0,0,0.1)] overflow-hidden">
           <div className="p-5 border-b border-gray-200">
             <h2 className="text-xl font-bold text-gray-800 font-adlam">Calculation History</h2>
@@ -154,7 +155,7 @@ function UserDashboard() {
               <thead>
                 <tr className="bg-gray-100 border-b-2 border-black text-gray-700 font-bold text-sm">
                   <th className="p-4">Type</th>
-                  <th className="p-4">Dimensions / Spec</th>
+                  <th className="p-4">Dimensions / Space</th>
                   <th className="p-4">Equipment Required</th>
                   <th className="p-4">Total Cost ($)</th>
                   <th className="p-4 text-center">Action</th>

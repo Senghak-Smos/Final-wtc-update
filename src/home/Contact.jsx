@@ -7,6 +7,7 @@ function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    subject: "",
     message: "",
   });
   const [status, setStatus] = useState("");
@@ -32,9 +33,10 @@ function Contact() {
 
     try {
       await addDoc(collection(db, "contacts"), {
+        userName: user ? (user.displayName || user.email.split("@")[0]) : formData.name,
         userName: formData.name,
         userEmail: formData.email,
-        subject: "General Message",
+        subject: formData.subject,
         description: formData.message,
         userId: user ? user.uid : "guest",
         userRole: user ? "user" : "guest",
@@ -76,7 +78,7 @@ function Contact() {
         </p>
       </div>
       <br />
-      <div className="max-w-[600px] w-full mx-auto p-6 border-black rounded-[10px] bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.4)]">
+      <div className="max-w-[500px] w-full mx-auto p-6 border-black rounded-[10px] bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.4)]">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label className="font-inter font-bold">Name</label>
@@ -99,6 +101,19 @@ function Contact() {
               placeholder="your@example.com"
               required
               value={formData.email}
+              onChange={handleChange}
+              className="border-2 border-black h-[45px] w-full rounded-[10px] p-2 mt-1 focus:outline-none focus:border-blue-600"
+            />
+          </div>
+          
+          <div>
+            <label className="font-inter font-bold">Subject</label>
+            <input
+              type="text"
+              name="subject"
+              placeholder="Your suggestion"
+              required
+              value={formData.subject}
               onChange={handleChange}
               className="border-2 border-black h-[45px] w-full rounded-[10px] p-2 mt-1 focus:outline-none focus:border-blue-600"
             />

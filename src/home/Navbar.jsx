@@ -21,7 +21,7 @@ function Navbar() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
-        
+
         if (ADMIN_EMAILS.includes(user.email?.toLowerCase())) {
           setIsAdmin(true);
         } else {
@@ -80,12 +80,14 @@ function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50 bg-white shadow-md">
       <div className="flex flex-row justify-between items-center w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-12 py-3">
-        <Link
-          to="/#home"
-          className="font-adlam text-xl sm:text-2xl font-bold text-black whitespace-nowrap shrink-0"
-        >
-          C-E-R
-        </Link>
+        <div>
+          <Link
+            to="/#home"
+            className="font-adlam text-xl sm:text-2xl font-bold text-black whitespace-nowrap shrink-0"
+          >
+            C-E-R
+          </Link>
+        </div>
 
         {/* Desktop Navigation Menu */}
         <div className="hidden md:flex gap-6 items-center">
@@ -117,7 +119,7 @@ function Navbar() {
           {currentUser ? (
             <div className="flex items-center gap-3">
               <span className="px-3 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-[10px] border border-gray-300">
-                👤 {currentUser.email?.split("@")[0]} {isAdmin && "(Admin)"}
+                {currentUser.email?.split("@")[0]} {isAdmin && "(Admin)"}
               </span>
               <button
                 onClick={handleLogout}
@@ -198,7 +200,7 @@ function Navbar() {
           {currentUser ? (
             <div className="flex flex-col gap-2">
               <span className="px-5 py-2 text-center text-sm font-bold text-gray-700 bg-gray-100 rounded-[10px] border border-gray-300">
-                👤 {currentUser.email?.split("@")[0]} {isAdmin && "(Admin)"}
+                {currentUser.email?.split("@")[0]} {isAdmin && "(Admin)"}
               </span>
               <button
                 onClick={handleLogout}
