@@ -37,7 +37,12 @@ function Wir_cal() {
 
   useEffect(() => {
     const saveData = async () => {
-      if (watt > 0 && totalPriceUSD > 0) {
+      const isInputComplete =
+        powerwatt !== "" && parseFloat(powerwatt) > 0 &&
+        wirePrice !== "" && parseFloat(wirePrice) > 0 &&
+        breakerPrice !== "" && parseFloat(breakerPrice) > 0;
+
+      if (isInputComplete && watt > 0 && totalPriceUSD > 0) {
         try {
           const currentUser = auth.currentUser;
           let userRole = "guest";
@@ -74,16 +79,16 @@ function Wir_cal() {
             createdAt: new Date().toISOString(),
             timestamp: serverTimestamp(),
           });
-          console.log("Wire calculation auto-saved successfully!");
+          console.log("Wire calculation saved successfully!");
         } catch (error) {
-          console.error("Error auto-saving wire calculation:", error);
+          console.error("Error saving wire calculation:", error);
         }
       }
     };
 
     const timer = setTimeout(() => {
       saveData();
-    }, 1500);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [powerwatt, wirePrice, breakerPrice, watt, result.size, result.breaker, totalPriceUSD, totalPriceKHR]);

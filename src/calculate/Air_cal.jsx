@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-// === Firebase Imports ===
 import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 
@@ -48,10 +47,15 @@ function Air_cal() {
   const totalPriceUSD = acCount * unitPrice;
   const totalPriceKHR = totalPriceUSD * exchangeRate;
 
-  // === Auto-Save Logic ===
   useEffect(() => {
     const saveCalculation = async () => {
-      if (area > 0 && totalPriceUSD > 0) {
+      const isInputComplete =
+        length !== "" && parseFloat(length) > 0 &&
+        width !== "" && parseFloat(width) > 0 &&
+        people !== "" && parseInt(people) >= 0 &&
+        price !== "" && parseFloat(price) > 0;
+
+      if (isInputComplete && area > 0 && totalPriceUSD > 0) {
         try {
           const currentUser = auth.currentUser;
           let userRole = "guest";
@@ -85,7 +89,6 @@ function Air_cal() {
             costUSD: totalPriceUSD,
             costKHR: totalPriceKHR,
 
-            // === Account Metadata ===
             userId: currentUser ? currentUser.uid : "guest",
             userName: userName,
             userEmail: userEmail,
@@ -94,16 +97,16 @@ function Air_cal() {
             createdAt: new Date().toISOString(),
             timestamp: serverTimestamp(),
           });
-          console.log("Air calculation auto-saved successfully!");
+          console.log("Air calculation saved successfully!");
         } catch (error) {
-          console.error("Error auto-saving air calculation:", error);
+          console.error("Error saving air calculation:", error);
         }
       }
     };
 
     const timer = setTimeout(() => {
       saveCalculation();
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [
@@ -213,7 +216,6 @@ function Air_cal() {
         <br />
         <br />
 
-        {/* Display Results */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center bg-gray-300 p-5 rounded-[10px] border-2 border-white shadow-[0px_0px_10px_rgba(0,0,0,0.3)] w-full">
           <div>
             <h1 className="font-adlam text-xl sm:text-2xl text-blue-800">

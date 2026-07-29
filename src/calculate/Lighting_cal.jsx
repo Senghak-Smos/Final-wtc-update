@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-// === Firebase Imports ===
 import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 
@@ -26,10 +25,14 @@ function Lighting() {
   const totalPriceUSD = buluCount * unitPrice;
   const totalPriceKHR = totalPriceUSD * exchangeRate;
 
-  // === Auto-Save Logic ===
   useEffect(() => {
     const saveCalculation = async () => {
-      if (area > 0 && totalPriceUSD > 0) {
+      const isInputComplete =
+        length !== "" && parseFloat(length) > 0 &&
+        width !== "" && parseFloat(width) > 0 &&
+        price !== "" && parseFloat(price) > 0;
+
+      if (isInputComplete && area > 0 && totalPriceUSD > 0) {
         try {
           const currentUser = auth.currentUser;
           let userRole = "guest";
@@ -61,7 +64,6 @@ function Lighting() {
             costUSD: totalPriceUSD,
             costKHR: totalPriceKHR,
 
-            // === Account Metadata ===
             userId: currentUser ? currentUser.uid : "guest",
             userName: userName,
             userEmail: userEmail,
@@ -71,16 +73,16 @@ function Lighting() {
             timestamp: serverTimestamp(),
           });
 
-          console.log("Lighting calculation auto-saved successfully!");
+          console.log("Lighting calculation saved successfully!");
         } catch (error) {
-          console.error("Error auto-saving calculation:", error);
+          console.error("Error saving calculation:", error);
         }
       }
     };
 
     const timer = setTimeout(() => {
       saveCalculation();
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [

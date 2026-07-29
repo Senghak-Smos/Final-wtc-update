@@ -22,7 +22,12 @@ function Fan_cal() {
 
   useEffect(() => {
     const saveData = async () => {
-      if (area > 0 && fanCount > 0 && totalPriceUSD > 0) {
+      const isInputComplete =
+        length !== "" && parseFloat(length) > 0 &&
+        width !== "" && parseFloat(width) > 0 &&
+        price !== "" && parseFloat(price) > 0;
+
+      if (isInputComplete && area > 0 && fanCount > 0 && totalPriceUSD > 0) {
         try {
           const currentUser = auth.currentUser;
           let userRole = "guest";
@@ -61,15 +66,16 @@ function Fan_cal() {
             createdAt: new Date().toISOString(),
             timestamp: serverTimestamp(),
           });
+          console.log("Fan calculation saved successfully!");
         } catch (error) {
-          console.error("Error auto-saving fan calculation:", error);
+          console.error("Error saving fan calculation:", error);
         }
       }
     };
 
     const timer = setTimeout(() => {
       saveData();
-    }, 1500);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [length, width, fanType, price, area, fanCount, totalPriceUSD, totalPriceKHR]);

@@ -172,17 +172,45 @@ function UserDashboard() {
                   history.map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50">
                       <td className="p-4 font-bold text-blue-800">
-                        {item.type || item.tool || "Lighting"}
+                        {item.type || item.tool || "Calculation"}
                       </td>
 
                       <td className="p-4 text-gray-700">
-                        {item.area ? `${item.area} m²` : "N/A"}{" "}
-                        {item.length && item.width ? `(${item.length}m × ${item.width}m)` : ""}
+                        {item.area ? (
+                          <>
+                            {item.area} m² {item.length && item.width ? `(${item.length}m × ${item.width}m)` : ""}
+                          </>
+                        ) : item.watt ? (
+                          `Power Load: ${item.watt} W`
+                        ) : (
+                          "N/A"
+                        )}
                       </td>
 
                       <td className="p-4 font-semibold text-gray-800">
-                        {item.buluCount || item.bulbCount || item.quantity || 0} Bulbs
-                        {item.bulwatt || item.watt ? ` (${item.bulwatt || item.watt}W)` : ""}
+                        {item.acCount !== undefined && (
+                          <span>
+                            {item.acCount} Unit{item.acCount > 1 ? "s" : ""} ({item.recommendedHP})
+                          </span>
+                        )}
+
+                        {item.quantity !== undefined && item.fanType && (
+                          <span>
+                            {item.quantity} Fan{item.quantity > 1 ? "s" : ""}
+                          </span>
+                        )}
+
+                        {item.buluCount !== undefined && (
+                          <span>
+                            {item.buluCount} Bulb{item.buluCount > 1 ? "s" : ""} {item.bulwatt ? `(${item.bulwatt}W)` : ""}
+                          </span>
+                        )}
+
+                        {item.wireSize && (
+                          <span>
+                            Wire: {item.wireSize} | Breaker: {item.breaker}
+                          </span>
+                        )}
                       </td>
 
                       <td className="p-4 font-bold text-red-600">
