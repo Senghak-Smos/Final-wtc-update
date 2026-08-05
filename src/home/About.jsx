@@ -5,7 +5,7 @@ function About() {
       <br />
       <div className="text-center mb-12">
         <h1 className="font-adlam text-3xl sm:text-4xl text-gray-900 border-b-2 border-gray-800 inline-block pb-1">
-          About R-E-C
+          About C-E-R
         </h1>
         <br />
         <p className="font-biorhyme text-gray-600 mt-4 text-base sm:text-lg">
