@@ -124,7 +124,7 @@ function Contact() {
             <textarea
               name="message"
               required
-              placeholder="Description"
+              placeholder="Description & Contact"
               rows="4"
               value={formData.message}
               onChange={handleChange}
