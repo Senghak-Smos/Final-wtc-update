@@ -258,7 +258,7 @@ function AdminDashboard() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                User Management ({contacts.length})
+                User Message ({contacts.length})
               </button>
             </nav>
           </div>
