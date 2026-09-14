@@ -41,7 +41,7 @@ function Mian() {
       <section id="home"> <Home /> </section>
       <section id="about"> <About /> </section>
       <section id="service"> <Service /> </section>
-      <section id="owner"> <Owner /> </section>
+      {/* <section id="owner"> <Owner /> </section> */}
       <section id="contact"> <Contact /> </section>
       <section id="footer"> <Footer /> </section>
     </>

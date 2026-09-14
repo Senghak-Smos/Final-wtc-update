@@ -49,11 +49,11 @@ function Footer() {
                 <u>Contact</u>
               </a>
             </li>
-            <li className="hover:text-blue-800 transition">
+            {/* <li className="hover:text-blue-800 transition">
               <a href="#owner">
                 <u>Founder</u>
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
 
@@ -118,10 +118,10 @@ function Footer() {
               <img src={locat} alt="" className="w-6" />
               <li className="ml-2"> Cambodia</li>
             </div>
-            <div className="flex">
+            {/* <div className="flex">
               <img src={Call} alt="" className="w-6" />
               <li className="ml-2"> +(855)-15-475-879</li>
-            </div>
+            </div> */}
             <div className="flex">
               <img src={mail} alt="" className="w-6" />
               <li className="ml-2"> nangsenghak1@gmail.com</li>
